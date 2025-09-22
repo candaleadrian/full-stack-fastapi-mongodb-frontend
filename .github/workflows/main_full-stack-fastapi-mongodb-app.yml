@@ -60,12 +60,12 @@ jobs:
           name: nextjs-app
 
       # 2. Login to Azure
-      - name: Azure login
+      - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_3BDB2FE1BFD44033952F0C3E8BADA434 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1B598B495CD849E38A2AC0C6F8E51CD9 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_395966662A5A485CBF6E04EA62CEF28B }}
 
       # 3. Deploy to Azure Web App
       - name: Deploy to Azure Web App
@@ -76,3 +76,4 @@ jobs:
           slot-name: 'Production'
           package: .
   
+
