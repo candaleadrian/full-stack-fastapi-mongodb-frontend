@@ -13,33 +13,33 @@ jobs:
       contents: read
 
     steps:
-      # 1. Checkout repo
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      # 2. Setup Node.js
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '22.x'
 
-      # 3. Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # 4. Build Next.js app
-      - name: Build Next.js app
+      - name: Build Next.js app (standalone)
         run: npm run build
 
-      # 5. Upload the entire app folder as artifact
-      - name: Upload standalone build
+      - name: Prepare standalone folder for deployment
+        run: |
+          mkdir -p deploy
+          cp -r .next/standalone deploy/
+          cp -r .next/static deploy/
+          cp package.json deploy/
+          cp package-lock.json deploy/
+
+      - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
         with:
           name: nextjs-app
-          path: |
-            .next/standalone
-            package.json
-            package-lock.json
-            node_modules
+          path: deploy
           
   deploy:
     runs-on: ubuntu-latest
@@ -49,12 +49,10 @@ jobs:
       contents: read
 
     steps:
-      # 1. Download build artifact
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: nextjs-app
-          path: ./app
 
       # 2. Login to Azure
       - name: Login to Azure
@@ -64,21 +62,14 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1B598B495CD849E38A2AC0C6F8E51CD9 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_395966662A5A485CBF6E04EA62CEF28B }}
 
-      # 3. Deploy to Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'full-stack-fastapi-mongodb-app'
           slot-name: 'Production'
-          package: .next/standalone
-
-      - name: Set startup command
-        run: |
-          az webapp config set \
-            --name full-stack-fastapi-mongodb-app \
-            --resource-group <YOUR_RESOURCE_GROUP> \
-            --startup-file "node server.js"
+          package: deploy/standalone
   
+
 
 
 
