@@ -67,8 +67,9 @@ jobs:
         with:
           app-name: 'full-stack-fastapi-mongodb-app'
           slot-name: 'Production'
-          package: deploy/standalone
+          package: standalone
   
+
 
 
 
